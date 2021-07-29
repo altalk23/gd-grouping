@@ -17,6 +17,11 @@ inline void writeClamp999(int offset1000) {
 	m->registerWrite(getBase()+offset1000 + 5, 4, a999.s);
 }
 
+inline void writeClamp1101(int offset1101, int offset1102) {
+	m->registerWrite(getBase()+offset1101, 4, a1101.s);
+	m->registerWrite(getBase()+offset1102, 4, a1102.s);
+}
+
 inline void writeClamp999x2(int offset1000) {
 	m->registerWrite(getBase()+offset1000, 4, a1000.s);
 	m->registerWrite(getBase()+offset1000 + 5, 4, a999.s);
@@ -267,43 +272,30 @@ void patches() {
 
 	// SetupOpacityPopup::onTargetIDArrow(cocos2d::CCObject*)
 	writeClamp999(0x340d8 + 2);
-
-	write(0x34134 + 2, a1101.s);
-	write(0x3415b + 2, a1102.s);
+	writeClamp1101(0x34134 + 2, 0x3415b + 2);
 
 	// SetupOpacityPopup::textChanged(CCTextInputNode*)
 	writeClamp999(0x34abc + 2);
-
-	write(0x34b15 + 2, a1101.s);
-	write(0x34b3b + 2, a1102.s);
+	writeClamp1101(0x34b15 + 2, 0x34b3b + 2);
 
 
 	// SetupPulsePopup::onSelectTargetMode(cocos2d::CCObject*)
 	write(0x1eadb4 + 7, a1000.s);
-
-	write(0x1eae8f + 2, a1101.s);
-	write(0x1eaebb + 2, a1102.s);
+	writeClamp1101(0x1eae8f + 2, 0x1eaebb + 2);
 
 	// SetupPulsePopup::onUpdateCustomColor(cocos2d::CCObject*)
 	write(0x1eaefe + 7, a1000.s);
 	writeClamp999(0x1eaf3b + 2);
+	writeClamp1101(0x1eaf98 + 2, 0x1eafbb + 2);
 
-	write(0x1eaf98 + 2, a1101.s);
-	write(0x1eafbb + 2, a1102.s);
-
-	// SetupPulsePopup::updateCopyColorTextInputLabel()
+	// SetupPulsePopup::updateCopyColorTextInputLabel() | idk
 	write(0x1ebf38 + 3, a1000.s);
-
-	write(0x1ec15e + 2, a1101.s);
-	write(0x1ec0c5 + 1, a1101.s);
-	write(0x1ec18b + 2, a1102.s);
-	write(0x1ec0bf + 2, a1102.s);
+	writeClamp1101(0x1ec15e + 2, 0x1ec18b + 2);
+	writeClamp1101(0x1ec0c5 + 1, 0x1ec0bf + 2);
 
 	// SetupPulsePopup::textChanged(CCTextInputNode*)
 	writeClamp999(0x1ec9e9 + 1);
-
-	write(0x1ecc75 + 2, a1101.s);
-	write(0x1ecc9b + 2, a1102.s);
+	writeClamp1101(0x1ecc75 + 2, 0x1ecc9b + 2);
 
 	// SetupPulsePopup::updateEditorLabel()
 	write(0x1ec41b + 2, a1000.s);
@@ -313,6 +305,22 @@ void patches() {
 	write(0x1eb901 + 2, a999.s);
 
 	//TODO: Fix SetupPulsePopup interface
+
+	// SetupSpawnPopup::onTargetIDArrow(cocos2d::CCObject*)
+	writeClamp999(0x13adb8 + 2);
+	writeClamp1101(0x13ae14 + 2, 0x13ae3b + 2);
+
+	// SetupSpawnPopup::textChanged(CCTextInputNode*)
+	writeClamp999(0x13ba08 + 2);
+	writeClamp1101(0x13bae4 + 2, 0x13bb0b + 2);
+
+	// SetupObjectTogglePopup::onTargetIDArrow(cocos2d::CCObject*)
+	writeClamp999(0x1c1c78 + 2);
+	writeClamp1101(0x1c1cd4 + 2, 0x1c1cfb + 2);
+
+	// SetupObjectTogglePopup::textChanged(CCTextInputNode*)
+	writeClamp999(0x1c26bc + 2);
+	writeClamp1101(0x1c2715 + 2, 0x1c273b + 2);
 
 	// GJRotateCommandLayer::onUpdateGroupID2(cocos2d::CCObject*)
 }
@@ -368,6 +376,19 @@ class: public $GJEffectManager {
     	return $GJEffectManager::colorForGroupID(group, pulseColor, baseColor);
     }
 } GJEffectManagerHook;
+
+// class: public $GJBaseGameLayer {
+//     void spawnGroup(int group) override {
+//     	std::cout << "spawnGroup " <<  group << std::endl;
+//         $GJBaseGameLayer::spawnGroup(group);
+//     }
+
+//     void toggleGroup(int group, bool activate) override {
+//     	std::cout << "toggleGroup " <<  group << " " << activate << std::endl;
+//     	std::cout << cac_this->_effectManager()->isGroupEnabled(group) << std::endl;
+//      	$GJBaseGameLayer::toggleGroup(group, activate);
+//     }
+// } GJBaseGameLayerHook;
 
 static int const patc = (patches(), 0);
 APPLY_HOOKS();
