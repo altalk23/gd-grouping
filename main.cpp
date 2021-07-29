@@ -24,26 +24,9 @@ inline void writeClamp999x2(int offset1000) {
 	m->registerWrite(getBase()+offset1000 + 26, 4, a1000.s);
 }
 
-class: public $MenuLayer {
-	void onMoreGames(CCObject* ob) override {
-		FLAlertLayer::create("Cacao", "Hello from custom mod!", "OK")->show();
-	} 
-} MyMenuLayerHook;
-
-class: public $GJEffectManager {
-    bool init() override {
-        if ($GJEffectManager::init()) {
-            for (int i = 0; i <= GROUP; ++i) {
-                cac_this->m_colorActionsForGroup[i] = nullptr;
-                cac_this->m_colorSpritesForGroup[i] = nullptr;
-                cac_this->m_inheritanceNodesForGroup[i] = nullptr;
-                cac_this->m_groupToggled[i] = 1;
-            }
-            return true;
-        }
-        else return false;
-    }
-} GJEffectManagerHook;
+inline void nopArray(int offset) {
+	m->registerWrite(getBase()+offset, 9, (char*)"\x90\x90\x90\x90\x90\x90\x90\x90\x90");
+}
 
 void patches() {
 	std::cout << "aaaaa" << std::endl;
@@ -59,7 +42,45 @@ void patches() {
 	c1000000.v = GROUP * 1000;		// 10000000 | Collision key
 	cn1000000.v = GROUP * -1000;	// -10000000| Collision key
 
+	// EditorUI::updateObjectInfoLabel()
+	write(0x1d037 + 3, a1000.s);
+	write(0x1d089 + 3, a1000.s);
+
+	// LevelEditorLayer::addSpecial(GameObject*)
+	write(0x9514d + 3, a1000.s);
 	
+
+	// GJEffectManager::updateEffects(float)
+	nopArray(0x181f17);
+	nopArray(0x181ee1);
+
+	// GJEffectManager::updateOpacityEffects(float)
+	nopArray(0x1824b7);
+	nopArray(0x1824e7);
+
+	// GJEffectManager::updateOpacityAction(OpacityEffectAction*)
+	nopArray(0x1847ab);
+	nopArray(0x1847c5);
+
+	// GJEffectManager::updateActiveOpacityEffects()
+	nopArray(0x184847);
+	nopArray(0x18486f);
+
+	// GJEffectManager::updatePulseEffects(float)
+	nopArray(0x18228e);
+
+	// GJEffectManager::runPulseEffect(int, bool, float, float, float, PulseEffectType, cocos2d::_ccColor3B, cocos2d::_ccHSVValue, int, bool, bool, bool, int)
+	nopArray(0x184bc4);
+
+	// GJEffectManager::addGroupPulseEffect(PulseEffectAction*)
+	nopArray(0x184c70);
+
+	// GJEffectManager::colorForGroupID(int, cocos2d::_ccColor3B const&, bool)
+	m->registerWrite(getBase()+0x184fb9, 11, (char*)"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90");
+
+	// GJEffectManager::loadState(std::basic_string<char, std::char_traits<char>, std::allocator<char>>)
+	m->registerWrite(getBase()+0x189393, 8, (char*)"\x90\x90\x90\x90\x90\x90\x90\x90");
+
 	// LevelEditorLayer::getNextFreeGroupID(cocos2d::CCArray*)
 	write(0x9a377 + 2, a1001.s);
 
@@ -220,10 +241,6 @@ void patches() {
 	// LevelEditorLayer::onStopPlaytest()
 	write(0xa19e5 + 2, a1100.s);
 
-	// LevelEditorLayer::resetToggledGroups() | inlined smh
-
-	// LevelEditorLayer::resetObjectVector() | unused
-
 
 	// GJMoveCommandLayer::onUpdateGroupID(cocos2d::CCObject*)
 	writeClamp999x2(0x373383 + 1);
@@ -239,7 +256,118 @@ void patches() {
 	write(0x374840 + 2, a1101.s);
 	write(0x37475b + 2, a1102.s);
 	write(0x37486b + 2, a1102.s);
+
+
+	// SetGroupIDLayer::textChanged(CCTextInputNode*)
+	writeClamp999(0x197b4c + 1);
+
+	// non-virtual thunk to SetGroupIDLayer::textChanged(CCTextInputNode*)
+	writeClamp999(0x197be3 + 1);
+
+
+	// SetupOpacityPopup::onTargetIDArrow(cocos2d::CCObject*)
+	writeClamp999(0x340d8 + 2);
+
+	write(0x34134 + 2, a1101.s);
+	write(0x3415b + 2, a1102.s);
+
+	// SetupOpacityPopup::textChanged(CCTextInputNode*)
+	writeClamp999(0x34abc + 2);
+
+	write(0x34b15 + 2, a1101.s);
+	write(0x34b3b + 2, a1102.s);
+
+
+	// SetupPulsePopup::onSelectTargetMode(cocos2d::CCObject*)
+	write(0x1eadb4 + 7, a1000.s);
+
+	write(0x1eae8f + 2, a1101.s);
+	write(0x1eaebb + 2, a1102.s);
+
+	// SetupPulsePopup::onUpdateCustomColor(cocos2d::CCObject*)
+	write(0x1eaefe + 7, a1000.s);
+	writeClamp999(0x1eaf3b + 2);
+
+	write(0x1eaf98 + 2, a1101.s);
+	write(0x1eafbb + 2, a1102.s);
+
+	// SetupPulsePopup::updateCopyColorTextInputLabel()
+	write(0x1ebf38 + 3, a1000.s);
+
+	write(0x1ec15e + 2, a1101.s);
+	write(0x1ec0c5 + 1, a1101.s);
+	write(0x1ec18b + 2, a1102.s);
+	write(0x1ec0bf + 2, a1102.s);
+
+	// SetupPulsePopup::textChanged(CCTextInputNode*)
+	writeClamp999(0x1ec9e9 + 1);
+
+	write(0x1ecc75 + 2, a1101.s);
+	write(0x1ecc9b + 2, a1102.s);
+
+	// SetupPulsePopup::updateEditorLabel()
+	write(0x1ec41b + 2, a1000.s);
+	write(0x1ec377 + 2, a1000.s);
+
+	// SetupPulsePopup::updateTextInputLabel()
+	write(0x1eb901 + 2, a999.s);
+
+	//TODO: Fix SetupPulsePopup interface
+
+	// GJRotateCommandLayer::onUpdateGroupID2(cocos2d::CCObject*)
 }
+
+class: public $MenuLayer {
+	void onMoreGames(CCObject* ob) override {
+		FLAlertLayer::create("Cacao", "Hello from custom mod!", "OK")->show();
+	} 
+} MyMenuLayerHook;
+
+class: public $PlayLayer {
+	void pauseGame(bool p0) override {
+		std::cout << p0 << std::endl;
+		std::cout << cac_this->_effectManager() << std::endl;
+		return $PlayLayer::pauseGame(p0);
+	} 
+} PlayLayerHook;
+
+class: public $GJEffectManager {
+    bool init() override {
+        if ($GJEffectManager::init()) {
+            for (int i = 0; i <= GROUP; ++i) {
+                cac_this->m_colorActionsForGroup[i] = nullptr;
+                cac_this->m_colorSpritesForGroup[i] = nullptr;
+                cac_this->m_inheritanceNodesForGroup[i] = nullptr;
+                cac_this->m_groupToggled[i] = 1;
+            }
+            return true;
+        }
+        else return false;
+    }
+
+    float opacityModForGroup(int group) override {
+    	// std::cout << "opacityModForGroup" << group << std::endl;
+    	auto action = reinterpret_cast<OpacityEffectAction*>(cac_this->m_opacityActionsForGroup->objectForKey(group));
+    	if (action && (!action->_12c() || action->_opacity() < 1.0)) return action->_opacity();
+    	return 1.0;
+    }
+
+    OpacityEffectAction* runOpacityActionOnGroup(int group, float p1, float p2, int p3) override {
+    	// std::cout << group << " " << p1 << " " << p2 << " " << p3 << std::endl;
+    	auto mod = cac_this->opacityModForGroup(group);
+    	auto action = reinterpret_cast<OpacityEffectAction*>(OpacityEffectAction::create(p1, mod, p2, group));
+    	action->_13c() = p3;
+    	cac_this->m_opacityActionsForGroup->setObject(action, group);
+    	return action;
+    }
+
+    cocos2d::_ccColor3B colorForGroupID(int group, cocos2d::_ccColor3B const& pulseColor, bool baseColor) override {
+    	// std::cout << group << " " << (int)pulseColor.r << " " << (int)pulseColor.g << " " << (int)pulseColor.b << " " << baseColor << std::endl;
+    	// std::cout << cac_this->m_pulseActionsForGroup->objectForKey(group) << std::endl;
+    	if (!cac_this->m_pulseActionsForGroup->objectForKey(group)) return pulseColor;
+    	return $GJEffectManager::colorForGroupID(group, pulseColor, baseColor);
+    }
+} GJEffectManagerHook;
 
 static int const patc = (patches(), 0);
 APPLY_HOOKS();
