@@ -306,6 +306,7 @@ void patches() {
 
 	//TODO: Fix SetupPulsePopup interface
 
+
 	// SetupSpawnPopup::onTargetIDArrow(cocos2d::CCObject*)
 	writeClamp999(0x13adb8 + 2);
 	writeClamp1101(0x13ae14 + 2, 0x13ae3b + 2);
@@ -322,7 +323,54 @@ void patches() {
 	writeClamp999(0x1c26bc + 2);
 	writeClamp1101(0x1c2715 + 2, 0x1c273b + 2);
 
+
+	// GJRotateCommandLayer::onUpdateGroupID(cocos2d::CCObject*)
+	writeClamp999x2(0x4be3 + 1);
+	writeClamp1101(0x4c38 + 2, 0x4c5b + 2);
+
 	// GJRotateCommandLayer::onUpdateGroupID2(cocos2d::CCObject*)
+	writeClamp999x2(0x4cd3 + 2);
+	writeClamp1101(0x4d22 + 2, 0x4d4b + 2);
+
+	// GJRotateCommandLayer::textChanged(CCTextInputNode*)
+	writeClamp999(0x59ed + 1);
+	writeClamp999(0x5aca + 2);
+	writeClamp1101(0x5bf5 + 2, 0x5c1b + 2);
+	writeClamp1101(0x5d04 + 2, 0x5d2b + 2);
+
+
+	// GJPFollowCommandLayer::onTargetIDArrow(cocos2d::CCObject*)
+	writeClamp999x2(0x1b1363 + 1);
+	writeClamp1101(0x1b13b8 + 2, 0x1b13db + 2);
+
+	// GJPFollowCommandLayer::textChanged(CCTextInputNode*)
+	writeClamp999(0x1b1f1e + 1);
+	writeClamp1101(0x1b21d4 + 2, 0x1b21fb + 2);
+
+
+	// GJFollowCommandLayer::onUpdateGroupID(cocos2d::CCObject*)
+	writeClamp999x2(0x16c923 + 1);
+	writeClamp1101(0x16c978 + 2, 0x16c99b + 2);
+
+	// GJFollowCommandLayer::onUpdateGroupID2(cocos2d::CCObject*)
+	writeClamp999(0x16ca13 + 2);
+	write(0x16ca26 + 2, a1000.s);
+	writeClamp1101(0x16ca62 + 2, 0x16ca8b + 2);
+
+	// GJFollowCommandLayer::textChanged(CCTextInputNode*)
+	writeClamp999(0x16d5d9 + 1);
+	writeClamp999(0x16d6b6 + 2);
+	writeClamp1101(0x16d7c5 + 2, 0x16d7eb + 2);
+	writeClamp1101(0x16d8d4 + 2, 0x16d8fb + 2);
+
+
+	// SetTargetIDLayer::onTargetIDArrow(cocos2d::CCObject*)
+	writeClamp999(0x15af08 + 2);
+	writeClamp1101(0x15af64 + 2, 0x15af8b + 2);
+
+	// SetTargetIDLayer::textChanged(CCTextInputNode*)
+	writeClamp999(0x15b71c + 2);
+	writeClamp1101(0x15b775 + 2, 0x15b79b + 2);
 }
 
 class: public $MenuLayer {
