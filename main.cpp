@@ -45,7 +45,7 @@ void patches() {
 	a8808.v = 8 * GROUP + 808;          // 80808    | Containers mostly
 	f2000.v = GROUP;                    // 10000    | Follow key
 	c1000000.v = GROUP * 1000;          // 10000000 | Collision key
-	cn1000000.v = GROUP * -1000         // -10000000| Collision key
+	cn1000000.v = GROUP * -1000;        // -10000000| Collision key
 
 	// EditorUI::updateObjectInfoLabel()
 	write(0x1d037 + 3, a1000.s);
