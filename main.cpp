@@ -247,6 +247,10 @@ void patches() {
 	write(0xa19e5 + 2, a1100.s);
 
 
+	// EffectGameObject::triggerObject(GJBaseGameLayer*)
+	writeClamp999(0xb71dd + 2);
+
+
 	// GJMoveCommandLayer::onUpdateGroupID(cocos2d::CCObject*)
 	writeClamp999x2(0x373383 + 1);
 
@@ -371,6 +375,56 @@ void patches() {
 	// SetTargetIDLayer::textChanged(CCTextInputNode*)
 	writeClamp999(0x15b71c + 2);
 	writeClamp1101(0x15b775 + 2, 0x15b79b + 2);
+
+
+	// SetupAnimationPopup::onTargetIDArrow(cocos2d::CCObject*)
+	writeClamp999(0x209ff8 + 2);
+	writeClamp1101(0x20a054 + 2, 0x20a07b + 2);
+
+	// SetupAnimationPopup::textChanged(CCTextInputNode*)
+	writeClamp999(0x20ac1a + 2);
+	writeClamp1101(0x20acce + 2, 0x20acfb + 2);
+
+
+	// SetupCollisionTriggerPopup::onTargetIDArrow(cocos2d::CCObject*)
+	writeClamp999(0x1d77e8 + 2);
+	writeClamp1101(0x1d7844 + 2, 0x1d786b + 2);
+
+	// SetupCollisionTriggerPopup::textChanged(CCTextInputNode*)
+	writeClamp999(0x1d863e + 2);
+	writeClamp1101(0x1d8752 + 2, 0x1d877b + 2);
+
+
+	// SetupCountTriggerPopup::updateTargetID() | not inlined updateTargetID wtffffff
+	writeClamp999(0x15e8c1 + 2);
+	writeClamp1101(0x15e915 + 2, 0x15e93b + 2);
+
+	
+	// SetupInstantCountPopup::onTargetIDArrow(cocos2d::CCObject*)
+	writeClamp999(0x354558 + 2);
+	writeClamp1101(0x3545ac + 2, 0x3545db + 2);
+
+	// SetupInstantCountPopup::textChanged(CCTextInputNode*)
+	writeClamp999(0x3553c3 + 2);
+	writeClamp1101(0x3554d2 + 2, 0x3554fb + 2);
+
+
+	// SetupInteractObjectPopup::onTargetIDArrow(cocos2d::CCObject*)
+	writeClamp999(0x29bbf8 + 2);
+	writeClamp1101(0x29bc4c + 2, 0x29bc7b + 2);
+
+	// SetupInteractObjectPopup::textChanged(CCTextInputNode*)
+	writeClamp999(0x29c397 + 2);
+	writeClamp1101(0x29c442 + 2, 0x29c46b + 2);
+
+
+	// SetupTouchTogglePopup::onTargetIDArrow(cocos2d::CCObject*)
+	writeClamp999(0x158b98 + 2);
+	writeClamp1101(0x158bf4 + 2, 0x158c1b + 2);
+
+	// SetupTouchTogglePopup::textChanged(CCTextInputNode*)
+	writeClamp999(0x159714 + 2);
+	writeClamp1101(0x15976d + 2, 0x15979b + 2);
 }
 
 class: public $MenuLayer {
