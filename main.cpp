@@ -34,7 +34,6 @@ inline void nopArray(int offset) {
 }
 
 void patches() {
-	std::cout << "aaaaa" << std::endl;
 	a999.v = GROUP - 1;                 // 9999     | oh girl
 	a1000.v = GROUP;                    // 10000    | oh girl
 	a1001.v = GROUP + 1;                // 10001    | Next group id - ends at 1000 for some reason
@@ -63,7 +62,7 @@ void patches() {
 	nopArray(0x1824b7);
 	nopArray(0x1824e7);
 
-	// GJEffectManager::updateOpacityAction(OpacityEffectAction*)
+	// GJEffectManager::updateOpacityAction(OpacityEffectAction*) not this
 	nopArray(0x1847ab);
 	nopArray(0x1847c5);
 
@@ -451,14 +450,16 @@ class: public $GJEffectManager {
 
     float opacityModForGroup(int group) override {
     	auto action = reinterpret_cast<OpacityEffectAction*>(cac_this->m_opacityActionsForGroup->objectForKey(group));
-    	if (action && (!action->_12c() || action->_opacity() < 1.0)) return action->_opacity();
+    	if (action && (!action->m_finished || action->m_opacity < 1.0)) {
+    		return action->m_opacity;
+    	}
     	return 1.0;
     }
 
-    OpacityEffectAction* runOpacityActionOnGroup(int group, float p1, float p2, int p3) override {
+    OpacityEffectAction* runOpacityActionOnGroup(int group, float time, float targetOpacity, int uuid) override {
     	auto mod = cac_this->opacityModForGroup(group);
-    	auto action = reinterpret_cast<OpacityEffectAction*>(OpacityEffectAction::create(p1, mod, p2, group));
-    	action->_13c() = p3;
+    	auto action = OpacityEffectAction::create(time, mod, targetOpacity, group);
+    	action->m_uuid = uuid;
     	cac_this->m_opacityActionsForGroup->setObject(action, group);
     	return action;
     }
