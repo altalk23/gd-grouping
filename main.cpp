@@ -35,17 +35,17 @@ inline void nopArray(int offset) {
 
 void patches() {
 	std::cout << "aaaaa" << std::endl;
-	a999.v = GROUP - 1; 			// 9999     | oh girl
-	a1000.v = GROUP; 				// 10000    | oh girl
-	a1001.v = GROUP + 1; 			// 10001	| Next group id - ends at 1000 for some reason
-	a1100.v = GROUP + 100;			// 10100	| LevelEditorLayer be like
-	a1101.v = GROUP + 101;			// 10101	| Container loops and quite a lot of other stuff
-	a1102.v = GROUP + 102;			// 10102	| Quite a lot of other stuff
-	a4404.v = 4 * GROUP + 404;		// 40404	| float vector lmao
-	a8808.v = 8 * GROUP + 808;		// 80808	| Containers mostly
-	f2000.v = GROUP;				// 10000    | Follow key
-	c1000000.v = GROUP * 1000;		// 10000000 | Collision key
-	cn1000000.v = GROUP * -1000;	// -10000000| Collision key
+	a999.v = GROUP - 1;                 // 9999     | oh girl
+	a1000.v = GROUP;                    // 10000    | oh girl
+	a1001.v = GROUP + 1;                // 10001    | Next group id - ends at 1000 for some reason
+	a1100.v = GROUP + 100;              // 10100    | LevelEditorLayer be like
+	a1101.v = GROUP + 101;              // 10101    | Container loops and quite a lot of other stuff
+	a1102.v = GROUP + 102;              // 10102    | Quite a lot of other stuff
+	a4404.v = 4 * GROUP + 404;          // 40404    | float vector lmao
+	a8808.v = 8 * GROUP + 808;          // 80808    | Containers mostly
+	f2000.v = GROUP;                    // 10000    | Follow key
+	c1000000.v = GROUP * 1000;          // 10000000 | Collision key
+	cn1000000.v = GROUP * -1000         // -10000000| Collision key
 
 	// EditorUI::updateObjectInfoLabel()
 	write(0x1d037 + 3, a1000.s);
@@ -427,12 +427,6 @@ void patches() {
 	writeClamp1101(0x15976d + 2, 0x15979b + 2);
 }
 
-class: public $MenuLayer {
-	void onMoreGames(CCObject* ob) override {
-		FLAlertLayer::create("Cacao", "Hello from custom mod!", "OK")->show();
-	} 
-} MyMenuLayerHook;
-
 class: public $PlayLayer {
 	void pauseGame(bool p0) override {
 		std::cout << p0 << std::endl;
@@ -456,14 +450,12 @@ class: public $GJEffectManager {
     }
 
     float opacityModForGroup(int group) override {
-    	// std::cout << "opacityModForGroup" << group << std::endl;
     	auto action = reinterpret_cast<OpacityEffectAction*>(cac_this->m_opacityActionsForGroup->objectForKey(group));
     	if (action && (!action->_12c() || action->_opacity() < 1.0)) return action->_opacity();
     	return 1.0;
     }
 
     OpacityEffectAction* runOpacityActionOnGroup(int group, float p1, float p2, int p3) override {
-    	// std::cout << group << " " << p1 << " " << p2 << " " << p3 << std::endl;
     	auto mod = cac_this->opacityModForGroup(group);
     	auto action = reinterpret_cast<OpacityEffectAction*>(OpacityEffectAction::create(p1, mod, p2, group));
     	action->_13c() = p3;
@@ -472,25 +464,10 @@ class: public $GJEffectManager {
     }
 
     cocos2d::_ccColor3B colorForGroupID(int group, cocos2d::_ccColor3B const& pulseColor, bool baseColor) override {
-    	// std::cout << group << " " << (int)pulseColor.r << " " << (int)pulseColor.g << " " << (int)pulseColor.b << " " << baseColor << std::endl;
-    	// std::cout << cac_this->m_pulseActionsForGroup->objectForKey(group) << std::endl;
     	if (!cac_this->m_pulseActionsForGroup->objectForKey(group)) return pulseColor;
     	return $GJEffectManager::colorForGroupID(group, pulseColor, baseColor);
     }
 } GJEffectManagerHook;
-
-// class: public $GJBaseGameLayer {
-//     void spawnGroup(int group) override {
-//     	std::cout << "spawnGroup " <<  group << std::endl;
-//         $GJBaseGameLayer::spawnGroup(group);
-//     }
-
-//     void toggleGroup(int group, bool activate) override {
-//     	std::cout << "toggleGroup " <<  group << " " << activate << std::endl;
-//     	std::cout << cac_this->_effectManager()->isGroupEnabled(group) << std::endl;
-//      	$GJBaseGameLayer::toggleGroup(group, activate);
-//     }
-// } GJBaseGameLayerHook;
 
 static int const patc = (patches(), 0);
 APPLY_HOOKS();
