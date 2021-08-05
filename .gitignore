@@ -48,6 +48,3 @@ build
 
 # Macos be like
 **/.DS_Store
-
-# Ignore build binaries
-libGrouping.a
