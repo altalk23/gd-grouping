@@ -33,7 +33,7 @@ inline void nopArray(int offset) {
 	m->registerWrite(getBase()+offset, 9, (char*)"\x90\x90\x90\x90\x90\x90\x90\x90\x90");
 }
 
-void patches() {
+void inject() {
 	a999.v = GROUP - 1;                 // 9999     | oh girl
 	a1000.v = GROUP;                    // 10000    | oh girl
 	a1001.v = GROUP + 1;                // 10001    | Next group id - ends at 1000 for some reason
@@ -426,49 +426,50 @@ void patches() {
 	writeClamp1101(0x15976d + 2, 0x15979b + 2);
 }
 
-class: public $PlayLayer {
-	void pauseGame(bool p0) override {
+class $redirect(PlayLayer) {
+public:
+	void pauseGame(bool p0) {
 		std::cout << p0 << std::endl;
-		std::cout << cac_this->_effectManager() << std::endl;
+		std::cout << _effectManager() << std::endl;
 		return $PlayLayer::pauseGame(p0);
 	} 
 } PlayLayerHook;
 
-class: public $GJEffectManager {
+class $redirect(GJEffectManager) {
+public:
     bool init() override {
         if ($GJEffectManager::init()) {
             for (int i = 0; i <= GROUP; ++i) {
-                cac_this->m_colorActionsForGroup[i] = nullptr;
-                cac_this->m_colorSpritesForGroup[i] = nullptr;
-                cac_this->m_inheritanceNodesForGroup[i] = nullptr;
-                cac_this->m_groupToggled[i] = 1;
+                m_colorActionsForGroup[i] = nullptr;
+                m_colorSpritesForGroup[i] = nullptr;
+                m_inheritanceNodesForGroup[i] = nullptr;
+                m_groupToggled[i] = 1;
             }
             return true;
         }
         else return false;
     }
 
-    float opacityModForGroup(int group) override {
-    	auto action = reinterpret_cast<OpacityEffectAction*>(cac_this->m_opacityActionsForGroup->objectForKey(group));
+    float opacityModForGroup(int group) {
+    	auto action = reinterpret_cast<OpacityEffectAction*>(m_opacityActionsForGroup->objectForKey(group));
     	if (action && (!action->m_finished || action->m_opacity < 1.0)) {
     		return action->m_opacity;
     	}
     	return 1.0;
     }
 
-    OpacityEffectAction* runOpacityActionOnGroup(int group, float time, float targetOpacity, int uuid) override {
-    	auto mod = cac_this->opacityModForGroup(group);
+    OpacityEffectAction* runOpacityActionOnGroup(int group, float time, float targetOpacity, int uuid) {
+    	auto mod = opacityModForGroup(group);
     	auto action = OpacityEffectAction::create(time, mod, targetOpacity, group);
     	action->m_uuid = uuid;
-    	cac_this->m_opacityActionsForGroup->setObject(action, group);
+    	m_opacityActionsForGroup->setObject(action, group);
     	return action;
     }
 
-    cocos2d::_ccColor3B colorForGroupID(int group, cocos2d::_ccColor3B const& pulseColor, bool baseColor) override {
-    	if (!cac_this->m_pulseActionsForGroup->objectForKey(group)) return pulseColor;
+    cocos2d::_ccColor3B colorForGroupID(int group, cocos2d::_ccColor3B const& pulseColor, bool baseColor) {
+    	if (!m_pulseActionsForGroup->objectForKey(group)) return pulseColor;
     	return $GJEffectManager::colorForGroupID(group, pulseColor, baseColor);
     }
 } GJEffectManagerHook;
 
-static int const patc = (patches(), 0);
-APPLY_HOOKS();
+$apply();
